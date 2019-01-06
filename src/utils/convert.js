@@ -63,7 +63,7 @@ const renderResDoc = (properties, markdownModel) => {
 }
 
 const processProp = (properties, scope, pos = -1) => {
-  let scopedProperties = properties.map(property => ({ ...property })).filter(property => property.scope === scope);
+  let scopedProperties = properties.map(property => (Object.assign({}, property))).filter(property => property.scope === scope);
   if (scope === 'request' && pos > 0) {
     scopedProperties = scopedProperties.filter(s => s.pos === pos);
   }

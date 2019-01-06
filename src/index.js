@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require("babel-register");
+
 var program     = require('commander');
 const chalk       = require('chalk');
 const clear       = require('clear');
