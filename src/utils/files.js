@@ -23,5 +23,10 @@ module.exports = {
         resolve(data);
       })
     });
+  },
+
+  writeMdFile : (file, data) => {
+    const filePath = path.resolve(file);
+    fs.writeFileSync(filePath, data);
   }
 };

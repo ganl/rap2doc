@@ -36,7 +36,9 @@ const parseModules = (modules, target) => {
       item.interfaces.forEach(itf => {
         renderItfDoc(itf, markdownModel);
       })
-      // console.log(json2md(markdownModel))
+
+      let mdFile = `${target}/${item.name}/index.md`;
+      files.writeMdFile(mdFile, json2md(markdownModel))
     });
   })
   return true;
@@ -55,11 +57,48 @@ const renderItfDoc = (itf, markdownModel) => {
 
 const renderReqDoc = (properties, markdownModel) => {
   const request = processRequestProp(properties);
-  console.log(request, Tree.treeToJson(Tree.arrayToTree(request)))
+  // console.log(request, Tree.treeToJson(Tree.arrayToTree(request)))
+  markdownModel.push({ h3: "Request" });
+  renderTable(request, markdownModel);
 }
 
 const renderResDoc = (properties, markdownModel) => {
+  const response = processResponseProp(properties);
+  markdownModel.push({ h3: "Response" });
+  renderTable(response, markdownModel);
+}
 
+const renderTable = (properties, markdownModel) => {
+  const propTree = Tree.arrayToTree(properties);
+  console.log();
+  console.log();
+  // console.log(Tree.treeToJson(propTree));
+  console.log();
+  console.log();
+  let table = {
+    headers: ['名称', '类型', 'Mock规则', '初始值', '简介']
+  }
+  let rows = []
+  renderTableRow(propTree, rows)
+  table.rows = rows;
+  // console.log(table);
+  markdownModel.push({table})
+}
+
+const renderTableRow = (element, rows) => {
+  element.children && element.children.sort((a, b) => a.priority - b.priority).map(item => {
+    let row = [
+      item.name,
+      item.type || 'String',
+      item.rule || '',
+      item.value || '',
+      item.description || '',
+    ]
+    rows.push(row);
+    if (item.children && item.children.length) {
+      renderTableRow(item, rows)
+    }
+  })
 }
 
 const processProp = (properties, scope, pos = -1) => {
@@ -77,12 +116,6 @@ const processRequestProp = (properties) => {
 const processResponseProp = (properties) => {
   return processProp(properties, 'response')
 }
-
-const parseJson = () => {
-
-}
-
-
 
 
 // let obj = JSON.parse(data);
