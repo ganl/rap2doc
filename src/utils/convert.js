@@ -9,22 +9,25 @@ const toMd = (mode, json, target) => {
     files.readJsonFile(json).then(response => {
       let obj = JSON.parse(response || {});
       parseModules(obj.data.modules, target);
-      resolve()
+      resolve();
     }).catch(err => {
       // new Error(client.statusText)
-      reject(err)
+      reject(err);
     })
   })
 }
 
 const parseModules = (modules, target) => {
-  modules.forEach(item => {
+  // modules.forEach(async item => {
+  for (let index = 0; index < modules.length; index++) {
     let markdownModel = [];
+    let item = modules[index]
     mkdirp(`${target}/${item.name}`, function (err) {
       if (err) {
         console.error(err)
         return false;
       }
+      console.log(`convert module: ${item.name} ...`);
       // modules name , description
       markdownModel.push(
         { h1: item.name || "" }
@@ -38,10 +41,10 @@ const parseModules = (modules, target) => {
       })
 
       let mdFile = `${target}/${item.name}/index.md`;
-      files.writeMdFile(mdFile, json2md(markdownModel))
+      files.writeMdFile(mdFile, json2md(markdownModel));
     });
-  })
-  return true;
+  }
+  // })
 }
 
 const renderItfDoc = (itf, markdownModel) => {
@@ -70,11 +73,6 @@ const renderResDoc = (properties, markdownModel) => {
 
 const renderTable = (properties, markdownModel) => {
   const propTree = Tree.arrayToTree(properties);
-  console.log();
-  console.log();
-  // console.log(Tree.treeToJson(propTree));
-  console.log();
-  console.log();
   let table = {
     headers: ['名称', '类型', 'Mock规则', '初始值', '简介']
   }

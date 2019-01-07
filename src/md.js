@@ -26,7 +26,7 @@ function help () {
 }
 help()
 
-console.log(program_md.convert_mode, program_md.dir, program_md.offline, program_md.args)
+// console.log(program_md.convert_mode, program_md.dir, program_md.offline, program_md.args)
 
 const rawName = program_md.args[1]
 
