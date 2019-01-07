@@ -48,8 +48,7 @@ const run = async () => {
   status.start();
   converter.toMd(program_md.convert_mode, sourceSchema, targetDir).then(()=>{
     status.stop();
-    console.log();
-    console.log('Convert success!');
+    console.log('Convert Finish!');
   }).catch(err => {
     console.log(err);
   });

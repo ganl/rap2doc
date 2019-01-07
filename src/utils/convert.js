@@ -1,32 +1,32 @@
 const files = require('./files');
-const mkdirp = require('mkdirp');
+const mkdirp = require('fs-extra');
 const json2md = require('json2md');
 import Tree from './Tree'
 
-const toMd = (mode, json, target) => {
-  return new Promise((resolve, reject) => {
+const toMd = async (mode, json, target) => {
     // console.log(files.getCurrentDirectoryBase())
-    files.readJsonFile(json).then(response => {
-      let obj = JSON.parse(response || {});
-      parseModules(obj.data.modules, target);
-      resolve();
-    }).catch(err => {
-      // new Error(client.statusText)
-      reject(err);
-    })
+  await files.readJsonFile(json).then(async response => {
+    let obj = JSON.parse(response || {});
+    await parseModules(obj.data.modules, target);
+    Promise.resolve();
+  }).catch(err => {
+    // new Error(client.statusText)
+    Promise.reject(err);
   })
 }
 
-const parseModules = (modules, target) => {
+const parseModules = async (modules, target) => {
+  const dirOptions = {
+    mode: 0o2775
+  }
+  mkdirp.emptyDirSync(`${target}/`)
   // modules.forEach(async item => {
   for (let index = 0; index < modules.length; index++) {
     let markdownModel = [];
     let item = modules[index]
-    mkdirp(`${target}/${item.name}`, function (err) {
-      if (err) {
-        console.error(err)
-        return false;
-      }
+    try {
+      console.log();
+      await mkdirp.ensureDir(`${target}/${item.name}`, dirOptions)
       console.log(`convert module: ${item.name} ...`);
       // modules name , description
       markdownModel.push(
@@ -42,7 +42,11 @@ const parseModules = (modules, target) => {
 
       let mdFile = `${target}/${item.name}/index.md`;
       files.writeMdFile(mdFile, json2md(markdownModel));
-    });
+      console.log('success!')
+    } catch (err) {
+      console.error(err)
+      return false;
+    }
   }
   // })
 }
