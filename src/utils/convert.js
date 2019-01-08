@@ -3,6 +3,10 @@ const mkdirp = require('fs-extra');
 const json2md = require('json2md');
 import Tree from './Tree'
 
+String.prototype.replaceAll = function (search, replacement) {
+  return this.split(search).join(replacement);
+}
+
 const toMd = async (mode, json, target) => {
     // console.log(files.getCurrentDirectoryBase())
   await files.readJsonFile(json).then(async response => {
@@ -19,28 +23,29 @@ const parseModules = async (modules, target) => {
   const dirOptions = {
     mode: 0o2775
   }
-  mkdirp.emptyDirSync(`${target}/`)
   // modules.forEach(async item => {
   for (let index = 0; index < modules.length; index++) {
     let markdownModel = [];
-    let item = modules[index]
+    let item = modules[index];
+    let outputPath = `${target}/${item.name.replaceAll(' ', '_')}`
     try {
       console.log();
-      await mkdirp.ensureDir(`${target}/${item.name}`, dirOptions)
+      mkdirp.emptyDirSync(outputPath)
+      await mkdirp.ensureDir(outputPath, dirOptions)
       console.log(`convert module: ${item.name} ...`);
       // modules name , description
       markdownModel.push(
         { h1: item.name || "" }
       )
       markdownModel.push(
-        { p: item.description || "" }
+        { blockquote: item.description || "" }
       );
-      
+
       item.interfaces.forEach(itf => {
         renderItfDoc(itf, markdownModel);
       })
 
-      let mdFile = `${target}/${item.name}/index.md`;
+      let mdFile = `${outputPath}/README.md`;
       files.writeMdFile(mdFile, json2md(markdownModel));
       console.log('success!')
     } catch (err) {
@@ -118,17 +123,6 @@ const processRequestProp = (properties) => {
 const processResponseProp = (properties) => {
   return processProp(properties, 'response')
 }
-
-
-// let obj = JSON.parse(data);
-// let res = parseItems(obj);
-// let dirName = obj.info.name;
-// res.forEach(element => {
-//   let outputPath = path.resolve(`${__dirname}/${dirName}/${element.path.replaceAll(" ", "_").toLowerCase()}.md`);
-//   mkDirByPathSync(path.dirname(outputPath));
-//   fs.writeFileSync(outputPath, element.data);
-// });
-
 
 module.exports = {
   toMd

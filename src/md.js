@@ -42,7 +42,7 @@ const run = async () => {
     const urlPath = await inquirer.askSourceEndpoint();
     sourceSchema = urlPath.url_path;
   }
-  let targetDir = program_md.dir || './docs'
+  let targetDir = program_md.dir || './docs/apiref'
   const status = new Spinner('Parse json and convert to markdown, please wait...');
 
   status.start();

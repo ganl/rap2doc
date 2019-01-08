@@ -1,3 +1,4 @@
 node_modules
 json
-docs
+docs/apiref/*.md
+docs/apiref/*/
