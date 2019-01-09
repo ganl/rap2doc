@@ -83,7 +83,7 @@ const renderResDoc = (properties, markdownModel) => {
 const renderTable = (properties, markdownModel) => {
   const propTree = Tree.arrayToTree(properties);
   let table = {
-    headers: ['名称', '类型', 'Mock规则', '初始值', '简介']
+    headers: ['名称', '类型', '必选', '初始值', '简介', 'Mock规则']
   }
   let rows = []
   renderTableRow(propTree, rows)
@@ -94,12 +94,14 @@ const renderTable = (properties, markdownModel) => {
 
 const renderTableRow = (element, rows) => {
   element.children && element.children.sort((a, b) => a.priority - b.priority).map(item => {
+    let requireLabel = (item.required === null || item.required === undefined) ? '' : (item.required === true ? '是' : '否')
     let row = [
       item.name,
       item.type || 'String',
-      item.rule || '',
+      requireLabel,
       item.value || '',
       item.description || '',
+      item.rule || ''
     ]
     rows.push(row);
     if (item.children && item.children.length) {
