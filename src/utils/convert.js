@@ -86,17 +86,17 @@ const renderTable = (properties, markdownModel) => {
     headers: ['名称', '类型', '必选', '初始值', '简介', 'Mock规则']
   }
   let rows = []
-  renderTableRow(propTree, rows)
+  renderTableRow(propTree, rows, '')
   table.rows = rows;
   // console.log(table);
   markdownModel.push({table})
 }
 
-const renderTableRow = (element, rows) => {
+const renderTableRow = (element, rows, indent = '') => {
   element.children && element.children.sort((a, b) => a.priority - b.priority).map(item => {
     let requireLabel = (item.required === null || item.required === undefined) ? '' : (item.required === true ? '是' : '否')
     let row = [
-      item.name,
+      `${indent}${item.name}`,
       item.type || 'String',
       requireLabel,
       item.value || '',
@@ -105,7 +105,7 @@ const renderTableRow = (element, rows) => {
     ]
     rows.push(row);
     if (item.children && item.children.length) {
-      renderTableRow(item, rows)
+      renderTableRow(item, rows, `&nbsp;&nbsp;${indent}`)
     }
   })
 }
