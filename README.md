@@ -3,6 +3,11 @@
 
 ## 使用
 
+```bash
+npm install rap2doc
+npm link rap2doc
+```
+
 ```rap2doc md ./json/xx.json```
 
 生成的文件默认在 ./docs/apiref目录下
