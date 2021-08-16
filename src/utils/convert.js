@@ -60,9 +60,9 @@ const renderItfDoc = (itf, markdownModel) => {
   markdownModel.push({ h2: itf.name || "" })
   markdownModel.push({ p: itf.description || "" })
   markdownModel.push({ h3: "URL" })
-  markdownModel.push({ code: { "language": "txt", "content": `/${itf.url}` || "" } })
+  markdownModel.push({ code: { "language": "html", "content": `/${itf.url}` || "" } })
   markdownModel.push({ h3: "Method" })
-  markdownModel.push({ code: { "language": "txt", "content": itf.method || "" } })
+  markdownModel.push({ code: { "language": "html", "content": itf.method || "" } })
   renderReqDoc(itf.properties, markdownModel);
   renderResDoc(itf.properties, markdownModel);
 }
@@ -100,7 +100,7 @@ const renderTableRow = (element, rows, indent = '') => {
       item.type || 'String',
       requireLabel,
       item.value || '',
-      item.description || '',
+      (item.description || '').replaceAll('\n', ' <br> '),
       item.rule || ''
     ]
     rows.push(row);
