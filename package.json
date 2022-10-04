@@ -1,6 +1,6 @@
 {
   "name": "rap2doc",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "rap2 接口导出Markdown",
   "main": "index.js",
   "bin": {

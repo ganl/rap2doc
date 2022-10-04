@@ -8,10 +8,9 @@ String.prototype.replaceAll = function (search, replacement) {
 }
 
 const toMd = async (mode, json, target) => {
-    // console.log(files.getCurrentDirectoryBase())
   await files.readJsonFile(json).then(async response => {
     let obj = JSON.parse(response || {});
-    await parseModules(obj.data.modules, target);
+    await parseModules(obj.data.modules, `${target}/${obj.data.name}`);
     Promise.resolve();
   }).catch(err => {
     // new Error(client.statusText)
@@ -23,14 +22,14 @@ const parseModules = async (modules, target) => {
   const dirOptions = {
     mode: 0o2775
   }
+  mkdirp.emptyDirSync(target)
   // modules.forEach(async item => {
   for (let index = 0; index < modules.length; index++) {
     let markdownModel = [];
     let item = modules[index];
-    let outputPath = `${target}/${item.name.replaceAll(' ', '_')}`
+    let outputPath = `${target}`
     try {
       console.log();
-      mkdirp.emptyDirSync(outputPath)
       await mkdirp.ensureDir(outputPath, dirOptions)
       console.log(`convert module: ${item.name} ...`);
       // modules name , description
@@ -45,7 +44,7 @@ const parseModules = async (modules, target) => {
         renderItfDoc(itf, markdownModel);
       })
 
-      let mdFile = `${outputPath}/README.md`;
+      let mdFile = `${outputPath}/${item.name.replaceAll(' ', '_')}.md`;
       files.writeMdFile(mdFile, json2md(markdownModel));
       console.log('success!')
     } catch (err) {
@@ -60,7 +59,7 @@ const renderItfDoc = (itf, markdownModel) => {
   markdownModel.push({ h2: itf.name || "" })
   markdownModel.push({ p: itf.description || "" })
   markdownModel.push({ h3: "URL" })
-  markdownModel.push({ code: { "language": "html", "content": `/${itf.url}` || "" } })
+  itf.url && markdownModel.push({ code: { "language": "html", "content": itf.url.trim().substr(0, 1) !== '/' ? `/${itf.url}` : itf.url } })
   markdownModel.push({ h3: "Method" })
   markdownModel.push({ code: { "language": "html", "content": itf.method || "" } })
   renderReqDoc(itf.properties, markdownModel);
@@ -83,7 +82,7 @@ const renderResDoc = (properties, markdownModel) => {
 const renderTable = (properties, markdownModel) => {
   const propTree = Tree.arrayToTree(properties);
   let table = {
-    headers: ['名称', '类型', '必选', '初始值', '简介', 'Mock规则']
+    headers: ['名称', '类型', '必选', '简介', 'Mock初始值', 'Mock规则']
   }
   let rows = []
   renderTableRow(propTree, rows, '')
@@ -99,8 +98,8 @@ const renderTableRow = (element, rows, indent = '') => {
       `${indent}${item.name}`,
       item.type || 'String',
       requireLabel,
-      item.value || '',
       (item.description || '').replaceAll('\n', ' <br> '),
+      (item.value || '').replaceAll('\n', ' <br> '),
       item.rule || ''
     ]
     rows.push(row);

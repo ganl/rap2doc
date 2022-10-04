@@ -2,3 +2,4 @@ node_modules
 json
 docs/apiref/*.md
 docs/apiref/*/
+rapjson/
