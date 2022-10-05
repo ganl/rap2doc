@@ -2,18 +2,20 @@
 
 require("babel-register");
 
-var program     = require('commander');
+const program     = require('commander');
 const chalk       = require('chalk');
 const clear       = require('clear');
 const figlet      = require('figlet');
 
 program
-  .version('0.1.0')
+  .name('rap2doc')
+  .version('1.1.1')
   .usage('<command> [options]')
   .option('-D, --dir <path>', 'set the docs output path')
-  .command('md <input>')
+  .command('md')
   // .alias('markdown')
-  .command('html <input>')
+  // .command('html')
+  .argument('<input>', 'json file')
 
 /**
  * Help.
@@ -31,7 +33,7 @@ program.on('--help', () => {
 })
 
 program.parse(process.argv); //开始解析用户输入的命令
-
+console.log(program.args)
 if (program.args[0] === 'md' || program.args[0] === 'html') {
   clear();
   console.log(

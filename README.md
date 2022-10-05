@@ -4,8 +4,8 @@
 ## 使用
 
 ```bash
-npm install rap2doc
-npm link rap2doc
+yarn
+yarn link rap2doc
 ```
 
 ```rap2doc md ./json/xx.json```
